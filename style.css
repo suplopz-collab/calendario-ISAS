@@ -331,11 +331,13 @@ body {
                   /* ajusta este valor para subir o bajar */
     left: 50%;                /* centra horizontalmente */
     transform: translateX(-50%); /* centrado perfecto */
-    background-color: rgba(0,0,0,0.0); /* fondo oscuro opcional */
+    background-color: rgba(255, 255, 255, 0.85);
+; /* fondo oscuro opcional */
     padding: 15px 25px;       /* espacio interno */
     border-radius: 10px;      /* esquinas redondeadas */
     text-align: center;        /* centra hora y fecha dentro del recuadro */
-    color: rgb(253, 253, 253);             /* color de texto */
+   color: #0a3d62;
+             /* color de texto */
     z-index: 10;              /* asegura que esté arriba de otros elementos */
 }
 
