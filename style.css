@@ -147,8 +147,17 @@ body {
 
 /* Móvil */
 @media (max-width: 600px) {
-  #portada { max-height: 220px; overflow: hidden; }
-  #imagen-portada { height: 220px; object-fit: cover; }
+  #portada {
+  max-height: none;
+  overflow: visible;
+}
+
+#imagen-portada {
+  height: auto;
+  max-height: 220px; /* mantiene la imagen contenida sin cortar el texto */
+  object-fit: cover;
+}
+
   .texto-portada { bottom: 10px; padding: 8px 14px; border-radius: 8px; }
   #titulo-organizacion { font-size: 18px; }
   #info-organizacion { font-size: 12px; }
