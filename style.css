@@ -327,8 +327,8 @@ body {
   opacity: 2.85;
 }
 #reloj-calendario {
-    position: absolute;       /* permite mover libremente dentro de la portada */
-    top: 250px;                /* ajusta este valor para subir o bajar */
+    position: relative;       /* permite mover libremente dentro de la portada */
+                  /* ajusta este valor para subir o bajar */
     left: 50%;                /* centra horizontalmente */
     transform: translateX(-50%); /* centrado perfecto */
     background-color: rgba(0,0,0,0.0); /* fondo oscuro opcional */
