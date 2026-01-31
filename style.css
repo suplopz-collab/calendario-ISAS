@@ -1,0 +1,373 @@
+/* ───── GLOBAL ───── */
+* {
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: #f8f7f7;
+  color: #141414;
+}
+
+/* ───── PORTADA ───── */
+#portada {
+  position: relative;
+  text-align: center;
+}
+
+#imagen-portada {
+  width: 100%;
+  height: auto;
+}
+
+.texto-portada {
+  position: absolute;
+  bottom: 150px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.3);
+  color: white;
+  padding: 12px 20px;
+  border-radius: 10px;
+}
+
+/* ───── CALENDARIO ───── */
+#calendario {
+  padding: 100px;
+}
+
+.barra-mes {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.barra-mes button {
+  font-size: 30px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+#dias-semana {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-weight: bold;
+}
+
+#dias-mes {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-top: 4px;
+}
+
+#dias-mes div {
+  min-height: 60px;
+  padding: 6px;
+  border-radius: 8px;
+  background: white;
+  border: 1px solid #ccc;
+  text-align: center;
+  position: relative;
+}
+
+#dias-mes .vacio {
+  background: transparent;
+  border: none;
+}
+
+/* ───── FINES DE SEMANA ───── */
+#dias-mes div.sabado { background-color: orange; font-weight: bold; color: black; }
+#dias-mes div.domingo { background-color: orange; font-weight: bold; color: black; }
+
+/* ───── FESTIVOS ───── */
+#dias-mes div.festivo-nacional { background-color: red !important; color: white !important; }
+#dias-mes div.festivo-autonomico { background-color: green !important; color: white !important; }
+#dias-mes div.festivo-local { background-color: blue !important; color: white !important; }
+/* Icono info para festivos */
+.info-festivo {
+  position: absolute;   /* flota dentro del div de día */
+  top: 4px;             /* distancia desde arriba */
+  right: 4px;           /* distancia desde la derecha */
+  font-size: 20px;      /* tamaño más grande */
+  cursor: pointer;      /* cambia cursor al pasar por encima */
+  user-select: none;    /* no seleccionable */
+  z-index: 3;           /* por encima del punto morado */
+}
+
+/* Prioridad festivos sobre fines de semana */
+#dias-mes div.sabado.festivo-nacional,
+#dias-mes div.domingo.festivo-nacional { background-color: red !important; color: white !important; }
+#dias-mes div.sabado.festivo-autonomico,
+#dias-mes div.domingo.festivo-autonomico { background-color: green !important; color: white !important; }
+#dias-mes div.sabado.festivo-local,
+#dias-mes div.domingo.festivo-local { background-color: blue !important; color: white !important; }
+
+/* ───── BOTONES DE PORTADA ───── */
+.botones-portada {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.btn-portada {
+  display: block;
+  text-decoration: none;
+  text-align: center;
+  background: #007bff;
+  color: white;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 15px;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+}
+
+.btn-portada:hover {
+  background: #80089e;
+}
+
+.btn-portada.whatsapp { background: #25d366; }
+.btn-portada.whatsapp:hover { background: #01180a; }
+
+.btn-portada.secundario { background: #6c757d; }
+.btn-portada.secundario:hover { background: #8b07ac; }
+
+/* Escritorio */
+@media (min-width: 768px) {
+  .botones-portada { flex-direction: row; justify-content: center; }
+  .btn-portada { min-width: 200px; }
+}
+
+/* Móvil */
+@media (max-width: 600px) {
+  #portada { max-height: 220px; overflow: hidden; }
+  #imagen-portada { height: 220px; object-fit: cover; }
+  .texto-portada { bottom: 10px; padding: 8px 14px; border-radius: 8px; }
+  #titulo-organizacion { font-size: 18px; }
+  #info-organizacion { font-size: 12px; }
+  .btn-portada { font-size: 14px; padding: 10px; }
+}
+
+/* ───── LEYENDA FESTIVOS ───── */
+#leyenda-festivos {
+  margin-top: 15px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 13px;
+}
+
+.item-leyenda {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.color {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.color.nacional { background: red; }
+.color.autonomico { background: green; }
+.color.local { background: blue; }
+.color.fin-semana { background: rgb(218, 142, 2); }
+
+/* ───── MARCA DE AGENDA ───── */
+.marca-agenda {
+  position: absolute;
+  bottom: 4px;   /* distancia desde la parte inferior */
+  left: 4px;     /* distancia desde la izquierda */
+  width: 24px;   /* tamaño del punto */
+  height: 24px;
+  background-color: purple;
+  border-radius: 50%; /* lo hace redondo */
+  z-index: 2;     /* asegura que esté por encima del fondo y no tapado por otros elementos */
+}
+
+
+/* ───── POPUP DE FESTIVO ───── */
+#popup-festivo {
+  position: absolute;
+  z-index: 1000;
+  background: white;
+  padding: 12px 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  display: none;
+  max-width: 250px;
+}
+
+#popup-festivo #cerrar-popup {
+  margin-top: 8px;
+  display: inline-block;
+  padding: 4px 8px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+/* ───── POPUP DE AGENDA ───── */
+#popup-agenda {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1001;
+}
+
+#popup-agenda .popup-contenido {
+  background: rgb(247, 227, 48);
+  padding: 20px;
+  border-radius: 10px;
+  width: 300px;
+}
+
+#popup-agenda textarea {
+  width: 100%;
+  box-sizing: border-box;
+  resize: vertical;
+  min-height: 80px;
+  margin-top: 10px;
+  padding: 6px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+#popup-agenda .popup-botones {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+#popup-agenda .popup-botones button {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  background: #007bff;
+  color: white;
+}
+
+#popup-agenda .popup-botones button:hover {
+  background: #0056b3;
+}
+
+/* ───── CLASE OCULTO ───── */
+.oculto {
+  display: none !important;
+}
+#vista-archivos {
+  max-height: 200px; /* Altura máxima del recuadro */
+  overflow-y: auto;  /* Scroll vertical si se supera la altura */
+  border: 1px solid #ccc;
+  padding: 5px;
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: #fafafa;
+  border-radius: 4px;
+}
+#popup-alarma {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+#popup-alarma.oculto {
+  display: none;
+}
+
+.alarma-contenido {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  max-width: 300px;
+  animation: parpadeo 1s infinite alternate;
+}
+#reloj-calendario {
+  text-align: center;
+  margin-bottom: 10px;
+  font-family: inherit;
+}
+@keyframes parpadeo {
+  from { box-shadow: 0 0 10px #a855f7; }
+  to   { box-shadow: 0 0 25px #a855f7; }
+}
+
+#hora-actual {
+  font-size: 30px;
+  font-weight: 700;
+}
+
+#fecha-actual {
+  font-size: 24px;
+  font-weight:800;
+  opacity: 2.85;
+}
+#reloj-calendario {
+    position: absolute;       /* permite mover libremente dentro de la portada */
+    top: 250px;                /* ajusta este valor para subir o bajar */
+    left: 50%;                /* centra horizontalmente */
+    transform: translateX(-50%); /* centrado perfecto */
+    background-color: rgba(0,0,0,0.0); /* fondo oscuro opcional */
+    padding: 15px 25px;       /* espacio interno */
+    border-radius: 10px;      /* esquinas redondeadas */
+    text-align: center;        /* centra hora y fecha dentro del recuadro */
+    color: rgb(253, 253, 253);             /* color de texto */
+    z-index: 10;              /* asegura que esté arriba de otros elementos */
+}
+
+/* Ajusta estilo de hora y fecha */
+#hora-actual {
+    font-size: 36px;
+    font-weight: bold;
+}
+
+#fecha-actual {
+    font-size: 18px;
+    margin-top: 5px;
+}
+/* ====== DERECHOS LABORALES ====== */
+
+#derechos-laborales {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+#derechos-laborales h1 {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.bloque-derecho {
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 15px;
+}
+
+

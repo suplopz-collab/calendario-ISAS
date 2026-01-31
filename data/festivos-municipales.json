@@ -1,0 +1,16 @@
+{
+  "Murcia": [
+    {
+      "fecha": "2026-01-17",
+      "nombre": "San Antón",
+      "descripcion": "Festivo municipal de Murcia"
+    }
+  ],
+  "Cartagena": [
+    {
+      "fecha": "2026-02-05",
+      "nombre": "Santa Águeda",
+      "descripcion": "Festivo municipal de Cartagena"
+    }
+  ]
+}

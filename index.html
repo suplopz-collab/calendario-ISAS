@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Calendario Laboral Murcia</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0a3d62">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- PORTADA -->
+  <section id="portada">
+    <img id="imagen-portada" src="images/portada.jpg" alt="Portada">
+    
+    <div class="texto-portada">
+   
+
+
+</div>
+
+
+      <h1 id="titulo-organizacion">Calendario Laboral</h1>
+      <p id="info-organizacion">Región de Murcia</p>
+    </div>
+  </section>
+
+  <!-- CALENDARIO -->
+  <section id="calendario">
+<div id="reloj-calendario">
+  <div id="hora-actual"></div>
+  <div id="fecha-actual"></div>
+</div>
+
+    <div class="barra-mes">
+      <button id="mes-anterior">◀</button>
+      <h2 id="nombre-mes"></h2>
+      <button id="mes-siguiente">▶</button>
+    </div>
+
+    <div id="dias-semana">
+      <div>L</div>
+      <div>M</div>
+      <div>X</div>
+      <div>J</div>
+      <div>V</div>
+      <div>S</div>
+      <div>D</div>
+    </div>
+
+    <div id="dias-mes"></div>
+<div id="leyenda-festivos">
+  <div class="item-leyenda">
+    <span class="color nacional"></span> Festivo nacional
+  </div>
+  <div class="item-leyenda">
+    <span class="color autonomico"></span> Festivo autonómico (Región de Murcia)
+  </div>
+  <div class="item-leyenda">
+    <span class="color local"></span> Festivo local (municipio)
+  </div>
+  <div class="item-leyenda">
+    <span class="color fin-semana"></span> Sábado / Domingo
+  </div>
+</div>
+
+  </section>
+
+  <!-- POPUP FESTIVO -->
+ <div id="popup-agenda" class="oculto">
+  <div class="popup-contenido">
+
+    <h3 id="agenda-fecha"></h3>
+
+    <!-- TEXTO AGENDA -->
+    <textarea id="agenda-texto" rows="6" cols="30"></textarea>
+
+
+<label for="agenda-hora">Hora (opcional):</label>
+<input type="time" id="agenda-hora">
+<label>
+  <input type="checkbox" id="activar-recordatorio">
+  Activar recordatorio
+</label>
+
+<select id="tiempo-recordatorio">
+  <option value="60">1 hora antes</option>
+  <option value="1440">1 día antes</option>
+  <option value="4320">3 días antes</option>
+</select>
+
+    <!-- ARCHIVOS / IMÁGENES -->
+    <input type="file" id="agenda-archivo" multiple>
+
+    <!-- AQUÍ SE VERÁN LAS IMÁGENES / ARCHIVOS -->
+    <div id="vista-archivos"></div>
+
+    <!-- BOTONES -->
+    <div class="botones-popup">
+      <button id="guardar-agenda">Guardar</button>
+      <button id="cancelar-agenda">Cancelar</button>
+    </div>
+
+  </div>
+</div>
+<div id="popup-alarma" class="oculto">
+  <div class="alarma-contenido">
+    <h2>🔔 RECORDATORIO</h2>
+    <p id="alarma-texto"></p>
+    <button id="cerrar-alarma">Aceptar</button>
+  </div>
+</div>
+
+
+
+<script src="data/festivos-2026.js"></script>
+  <script src="app.js" defer></script>
+</body>
+</html>
+
+
