@@ -376,5 +376,60 @@ body {
     padding: 20px 8px;
   }
 }
+/* ===== CONTACTO + AFÍLIATE EN PORTADA ===== */
+#contacto-portada{
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  text-align: center;
+}
+
+#contacto-texto{
+  font-size: 12px;
+  line-height: 1.25;
+}
+
+#contacto-texto a{
+  color: #ffffff;            /* dentro de la caja oscura de portada */
+  text-decoration: underline;
+}
+
+#cta-afiliate{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  /* “igual de alta que dos renglones”: lo logramos con tamaño + padding */
+  font-size: 20px;
+  font-weight: 900;
+  line-height: 1;
+  padding: 10px 14px;
+
+  border-radius: 12px;
+  text-decoration: none;
+
+  /* morado tirando a rojo, muy llamativo */
+  color: #ffffff;
+  background: #a21caf;       /* morado-rojizo */
+  border: 2px solid rgba(255,255,255,0.35);
+}
+
+#cta-afiliate:hover{
+  filter: brightness(1.05);
+}
+
+/* En pantallas estrechas, apilamos para que no se vea apretado */
+@media (max-width: 600px){
+  #contacto-portada{
+    flex-direction: column;
+    gap: 10px;
+  }
+  #cta-afiliate{
+    width: 100%;
+    max-width: 240px;
+  }
+}
 
 
