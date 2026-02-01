@@ -4,7 +4,7 @@ const FESTIVOS_2026 = [
 
   // --- NACIONALES ---
   { fecha: "2026-01-01", tipo: "nacional", nombre: "Año Nuevo" },
-  { fecha: "2026-01-06", tipo: "nacional", nombre: "Epifanía del Señor" },
+  { fecha: "2026-01-06", tipo: "nacional", nombre: "Dia de los Reyes Magos" },
   { fecha: "2026-03-19", tipo: "nacional", nombre: "San José" },
   { fecha: "2026-04-02", tipo: "nacional", nombre: "Jueves Santo" },
   { fecha: "2026-04-03", tipo: "nacional", nombre: "Viernes Santo" },
@@ -31,5 +31,5 @@ const FESTIVOS_2026 = [
 
   { fecha: "2026-03-27", tipo: "local", nombre: "Fiesta Local", municipio: "Cartagena" },
 
-  { fecha: "2026-02-17", tipo: "local", nombre: "Día del Agrio (Convenio Colectivo)", municipio: "Manipulados de Agrios" }
+  { fecha: "2026-02-17", tipo: "local", nombre: "Día del Agrio (Convenio Colectivo)", municipio: "Convenio Manipulados de Agrios" }
 ];
