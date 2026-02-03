@@ -87,6 +87,11 @@ body {
 #dias-mes div.festivo-nacional { background-color: red !important; color: white !important; }
 #dias-mes div.festivo-autonomico { background-color: green !important; color: white !important; }
 #dias-mes div.festivo-local { background-color: blue !important; color: white !important; }
+#dias-mes div.dia-sobrante{
+  background-color: #ffd500 !important;
+  color: #111 !important;
+  font-weight: bold;
+}
 /* Icono info para festivos */
 .info-festivo {
   position: absolute;   /* flota dentro del div de día */
@@ -440,5 +445,15 @@ body {
     max-width: 240px;
   }
 }
+/* ===== DÍA SOBRANTE JORNADA ANUAL (amarillo) ===== */
+#dias-mes div.dia-sobrante{
+  background-color: #ffd500 !important;
+  color: #111 !important;
+  font-weight: bold;
+}
 
+/* Color de la leyenda */
+.color.sobrante{
+  background: #ffd500;
+}
 
