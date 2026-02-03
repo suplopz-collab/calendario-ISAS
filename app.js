@@ -33,13 +33,20 @@ const meses = [
   "Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"
 ];
 
-// ===== FESTIVOS 2026 =====
+// ===== FESTIVOS 2026 (base + sobrantes) =====
 const FESTIVOS = [
+  ...(typeof FESTIVOS_BASE_2026 !== "undefined" ? FESTIVOS_BASE_2026 : []),
   { fecha: "2026-01-01", tipo: "nacional", nombre: "Año Nuevo" },
   { fecha: "2026-12-25", tipo: "nacional", nombre: "Navidad" },
   { fecha: "2026-05-01", tipo: "autonomico", nombre: "Día del Trabajador" },
-  { fecha: "2026-08-15", tipo: "local", nombre: "Fiesta Local", municipio: "Mi Ciudad" }
+  { fecha: "2026-08-15", tipo: "local", nombre: "Fiesta Local", municipio: "Mi Ciudad" },
+  { fecha: "2026-10-30", tipo: "sobrante", nombre: "DÍA SOBRANTE JORNADA ANUAL" },
+  { fecha: "2026-11-23", tipo: "sobrante", nombre: "DÍA SOBRANTE JORNADA ANUAL" },
+  { fecha: "2026-12-24", tipo: "sobrante", nombre: "DÍA SOBRANTE JORNADA ANUAL" },
+  { fecha: "2026-12-31", tipo: "sobrante", nombre: "DÍA SOBRANTE JORNADA ANUAL" }
 ];
+
+ 
 
 // ===== PINTAR CALENDARIO =====
 function pintarCalendario() {
@@ -70,12 +77,13 @@ function pintarCalendario() {
     if(diaSemana === 0) divDia.classList.add("domingo");
 
     // FESTIVOS
-    const festivosDia = FESTIVOS_2026.filter(f => f.fecha === fechaISO);
+    const festivosDia = FESTIVOS.filter(f => f.fecha === fechaISO);
     if(festivosDia.length > 0){
       const tipos = festivosDia.map(f=>f.tipo);
-      if(tipos.includes("nacional")) divDia.classList.add("festivo-nacional");
-      else if(tipos.includes("autonomico")) divDia.classList.add("festivo-autonomico");
-      else divDia.classList.add("festivo-local");
+      if (tipos.includes("sobrante")) divDia.classList.add("dia-sobrante");
+else if (tipos.includes("nacional")) divDia.classList.add("festivo-nacional");
+else if (tipos.includes("autonomico")) divDia.classList.add("festivo-autonomico");
+else divDia.classList.add("festivo-local");
 
       const info = document.createElement("span");
       info.textContent = "ℹ️";
@@ -450,6 +458,7 @@ if ('serviceWorker' in navigator) {
       .catch(err => console.error('SW error', err));
   });
 }
+
 
 
 
