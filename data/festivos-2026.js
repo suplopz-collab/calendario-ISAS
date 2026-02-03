@@ -1,6 +1,6 @@
 // ===== FESTIVOS 2026 (Región de Murcia) =====
 
-const FESTIVOS_2026 = [
+const FESTIVOS_BASE_2026 = [
 
   // --- NACIONALES ---
   { fecha: "2026-01-01", tipo: "nacional", nombre: "Año Nuevo" },
