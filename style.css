@@ -456,4 +456,35 @@ body {
 .color.sobrante{
   background: #ffd500;
 }
+/* ====== MARCAS DE TURNO (cuadrado abajo-izquierda) ====== */
+.marca-turno {
+  position: absolute;
+ right: 3px;
+bottom: 3px;
+
+  width: 18px;
+  height:18px;
+  border-radius: 2px;
+  border: 1px solid rgba(0,0,0,0.25); /* borde normal */
+}
+
+/* Colores de turno (no coinciden con el morado ni con la campana) */
+.turno-manana { background: #2ecc71; } /* verde */
+.turno-tarde  { background: #f39c12; } /* naranja */
+.turno-noche  { background: #3498db; } /* azul */
+
+/* FIN DE SEMANA: siempre borde negro fuerte */
+.sabado .marca-turno,
+.domingo .marca-turno {
+  border: 2px solid #000;
+}
+
+/* (Opcional recomendado) Festivos: también borde negro fuerte */
+.festivo-nacional .marca-turno,
+.festivo-autonomico .marca-turno,
+.festivo-local .marca-turno {
+  border: 2px solid #000;
+}
+
+
 
