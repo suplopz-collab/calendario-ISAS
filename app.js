@@ -1,5 +1,7 @@
 
 
+
+
 if ("Notification" in window && Notification.permission !== "granted") {
   Notification.requestPermission();
 }
@@ -99,7 +101,24 @@ else divDia.classList.add("festivo-local");
 
     // PUNTO MORADO
     const notaGuardada = localStorage.getItem("agenda-" + fechaISO);
-    const archivosGuardados = JSON.parse(localStorage.getItem("archivos-" + fechaISO) || "[]");
+    // ====== MARCA DE TURNO (cuadrado abajo-izquierda) ======
+if (notaGuardada) {
+  const nota = notaGuardada.toUpperCase();
+
+  let claseTurno = "";
+  if (nota.includes("TURNO") && nota.includes("MAÑANA")) claseTurno = "turno-manana";
+  else if (nota.includes("TURNO") && nota.includes("TARDE")) claseTurno = "turno-tarde";
+  else if (nota.includes("TURNO") && nota.includes("NOCHE")) claseTurno = "turno-noche";
+
+  // Evitar duplicados si repintas el calendario
+  if (claseTurno && !divDia.querySelector(".marca-turno")) {
+    const marca = document.createElement("span");
+    marca.classList.add("marca-turno", claseTurno);
+    divDia.appendChild(marca);
+  }
+}
+
+const archivosGuardados = JSON.parse(localStorage.getItem("archivos-" + fechaISO) || "[]");
 // 🔔 ICONO RECORDATORIO
 // 🔔 ICONO RECORDATORIO CON TOOLTIP
 const recordatorioRaw = localStorage.getItem("recordatorio-" + fechaISO);
@@ -134,7 +153,13 @@ if (recordatorioRaw) {
 
     const hayTexto = notaGuardada && notaGuardada.trim() !== "";
     const hayArchivos = archivosGuardados.length > 0;
-    punto.style.display = (hayTexto || hayArchivos) ? "block" : "none";
+    // Si la nota es SOLO el turno, no enseñamos el punto morado.
+// Si hay cualquier otra cosa escrita (otra línea o más texto), sí se muestra.
+const textoLimpio = (notaGuardada || "").trim();
+const esSoloTurno = /^.*TURNO:\s*(MAÑANA|TARDE|NOCHE).*$\s*$/i.test(textoLimpio) && !textoLimpio.includes("\n");
+
+const hayTurno = notaGuardada && /TURNO:\s*(MAÑANA|TARDE|NOCHE)/i.test(notaGuardada);
+punto.style.display = ((hayArchivos) || (hayTexto && !esSoloTurno)) ? "block" : "none";
 
     // CLICK ABRE AGENDA
     divDia.addEventListener("click", () => abrirAgenda(fechaISO));
@@ -261,6 +286,36 @@ function abrirAgenda(fechaISO){
 
   textarea.scrollIntoView({ behavior: "smooth", block: "center" });
   textarea.focus();
+const contPlantillas = document.getElementById("plantillas-agenda");
+const inputHora = document.getElementById("agenda-hora");
+
+if (contPlantillas) {
+  contPlantillas.onclick = (e) => {
+    const btn = e.target.closest("button.tpl");
+    if (!btn) return;
+
+    const tipo = btn.dataset.tpl;
+
+    const plantillas = {
+      TURNO_M: "🟦 TURNO: Mañana (06:00–14:00)",
+      TURNO_T: "🟦 TURNO: Tarde (14:00–22:00)",
+      TURNO_N: "🟦 TURNO: Noche (22:00–06:00)",
+      VACACIONES: "🟨 VACACIONES",
+      MEDICO: "🟥 MÉDICO: " + (inputHora && inputHora.value ? inputHora.value : ""),
+      LIBRE: "🟩 LIBRE"
+    };
+
+    const linea = (plantillas[tipo] || "").trim();
+    if (!linea) return;
+
+    // Si hay texto, lo añadimos en nueva línea; si no, lo ponemos.
+    textarea.value = textarea.value.trim()
+      ? (textarea.value.trim() + "\n" + linea)
+      : linea;
+
+    textarea.focus();
+  };
+}
 
   const btnGuardar = document.getElementById("guardar-agenda");
   const btnCancelar = document.getElementById("cancelar-agenda");
@@ -458,7 +513,6 @@ if ('serviceWorker' in navigator) {
       .catch(err => console.error('SW error', err));
   });
 }
-
 
 
 
