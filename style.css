@@ -10,6 +10,61 @@ body {
   color: #141414;
 }
 
+#pwa-banner {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  z-index: 10050;
+  background: #0a3d62;
+  color: #fff;
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.25);
+}
+
+#pwa-banner-texto {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+#pwa-banner-estado {
+  margin: 0 0 8px 0;
+  font-size: 13px;
+  opacity: 0.92;
+}
+
+#pwa-banner-acciones {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+#pwa-banner button {
+  min-height: 44px;
+  border: 0;
+  border-radius: 8px;
+  padding: 0 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+#btn-instalar-app {
+  background: #43c6ac;
+  color: #04221b;
+}
+
+#btn-actualizar-app {
+  background: #f7e330;
+  color: #1d1a00;
+}
+
+#btn-cerrar-pwa-banner {
+  background: #ffffff;
+  color: #0a3d62;
+}
+
 /* ───── PORTADA ───── */
 #portada {
   position: relative;
@@ -34,20 +89,36 @@ body {
 
 /* ───── CALENDARIO ───── */
 #calendario {
-  padding: 100px;
+  padding: 28px 16px 80px;
 }
 
 .barra-mes {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 25;
+  background: rgba(248, 247, 247, 0.95);
+  backdrop-filter: blur(4px);
+  padding: 8px 0;
 }
 
 .barra-mes button {
-  font-size: 30px;
-  background: none;
-  border: none;
+  min-width: 44px;
+  min-height: 44px;
+  font-size: 24px;
+  background: #ffffff;
+  border: 1px solid #c6c6c6;
+  border-radius: 10px;
   cursor: pointer;
+}
+
+.barra-mes h2 {
+  margin: 0;
+  flex: 1;
+  text-align: center;
 }
 
 #dias-semana {
@@ -65,18 +136,21 @@ body {
 }
 
 #dias-mes div {
-  min-height: 60px;
+  min-height: 72px;
   padding: 6px;
   border-radius: 8px;
   background: white;
   border: 1px solid #ccc;
   text-align: center;
   position: relative;
+  cursor: pointer;
+  touch-action: manipulation;
 }
 
 #dias-mes .vacio {
   background: transparent;
   border: none;
+  cursor: default;
 }
 
 /* ───── FINES DE SEMANA ───── */
@@ -91,6 +165,15 @@ body {
   background-color: #ffd500 !important;
   color: #111 !important;
   font-weight: bold;
+}
+
+/* ───── DIA ACTUAL ───── */
+#dias-mes div.dia-hoy {
+  background-color: #43c6ac !important;
+  color: #0b2a22 !important;
+  font-weight: 700;
+  border: 2px solid #1f8f79 !important;
+  box-shadow: 0 0 0 2px rgba(67, 198, 172, 0.25);
 }
 /* Icono info para festivos */
 .info-festivo {
@@ -194,7 +277,9 @@ body {
 .color.nacional { background: red; }
 .color.autonomico { background: green; }
 .color.local { background: blue; }
+.color.sobrante { background: #ffd500; }
 .color.fin-semana { background: rgb(218, 142, 2); }
+.color.hoy { background: #43c6ac; }
 
 /* ───── MARCA DE AGENDA ───── */
 .marca-agenda {
@@ -211,26 +296,39 @@ body {
 
 /* ───── POPUP DE FESTIVO ───── */
 #popup-festivo {
-  position: absolute;
-  z-index: 1000;
-  background: white;
-  padding: 12px 16px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-  display: none;
-  max-width: 250px;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1002;
 }
 
-#popup-festivo #cerrar-popup {
-  margin-top: 8px;
-  display: inline-block;
-  padding: 4px 8px;
-  background: #007bff;
-  color: white;
+.popup-festivo-contenido {
+  width: min(92vw, 420px);
+  max-height: 78vh;
+  overflow: auto;
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+#texto-popup-festivo {
+  white-space: pre-wrap;
+  margin: 0 0 12px 0;
+  font-family: inherit;
+}
+
+#cerrar-popup-festivo {
+  min-height: 44px;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
+  padding: 0 14px;
+  background: #0a3d62;
+  color: #fff;
+  font-weight: 700;
   cursor: pointer;
-  font-size: 12px;
 }
 
 /* ───── POPUP DE AGENDA ───── */
@@ -246,9 +344,46 @@ body {
 
 #popup-agenda .popup-contenido {
   background: rgb(247, 227, 48);
-  padding: 20px;
+  padding: 16px;
   border-radius: 10px;
-  width: 300px;
+  width: min(92vw, 420px);
+  max-height: 86vh;
+  overflow: auto;
+}
+
+#agenda-fecha {
+  margin: 0 0 10px 0;
+}
+
+.agenda-bloque {
+  background: rgba(255, 255, 255, 0.45);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.agenda-subtitulo {
+  margin: 0 0 8px 0;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+.plantillas-agenda {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+#popup-agenda .plantillas-agenda .tpl {
+  min-height: 40px;
+  background: #0a3d62;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
 }
 
 #popup-agenda textarea {
@@ -256,20 +391,50 @@ body {
   box-sizing: border-box;
   resize: vertical;
   min-height: 80px;
-  margin-top: 10px;
+  margin-top: 0;
   padding: 6px;
   border-radius: 6px;
   border: 1px solid #ccc;
+  background: #fff;
 }
 
-#popup-agenda .popup-botones {
+#popup-agenda label {
+  display: block;
+  margin-top: 2px;
+  font-weight: 600;
+}
+
+#popup-agenda input[type="time"],
+#popup-agenda select,
+#popup-agenda input[type="file"] {
+  width: 100%;
+  max-width: 100%;
+  margin-top: 6px;
+  margin-bottom: 6px;
+}
+
+.check-inline {
   display: flex;
-  justify-content: space-between;
-  margin-top: 10px;
+  align-items: center;
+  gap: 8px;
 }
 
-#popup-agenda .popup-botones button {
-  padding: 6px 12px;
+.check-inline input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+}
+
+.botones-popup {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+#popup-agenda button,
+.botones-popup button {
+  min-height: 44px;
+  padding: 0 12px;
   border-radius: 6px;
   border: none;
   cursor: pointer;
@@ -278,8 +443,25 @@ body {
   color: white;
 }
 
-#popup-agenda .popup-botones button:hover {
+#popup-agenda button:hover,
+.botones-popup button:hover {
   background: #0056b3;
+}
+
+#guardar-agenda {
+  background: #0a7a52;
+}
+
+#guardar-agenda:hover {
+  background: #075f3f;
+}
+
+#cancelar-agenda {
+  background: #7a1522;
+}
+
+#cancelar-agenda:hover {
+  background: #5f0f1a;
 }
 
 /* ───── CLASE OCULTO ───── */
@@ -321,9 +503,18 @@ body {
   animation: parpadeo 1s infinite alternate;
 }
 #reloj-calendario {
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
   text-align: center;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   font-family: inherit;
+  background-color: rgba(255, 255, 255, 0.85);
+  padding: 12px 18px;
+  border-radius: 10px;
+  color: #0a3d62;
+  z-index: 10;
+  width: fit-content;
 }
 @keyframes parpadeo {
   from { box-shadow: 0 0 10px #a855f7; }
@@ -331,39 +522,14 @@ body {
 }
 
 #hora-actual {
-  font-size: 30px;
+  font-size: 32px;
   font-weight: 700;
 }
 
 #fecha-actual {
-  font-size: 24px;
-  font-weight:800;
-  opacity: 2.85;
-}
-#reloj-calendario {
-    position: relative;       /* permite mover libremente dentro de la portada */
-                  /* ajusta este valor para subir o bajar */
-    left: 50%;                /* centra horizontalmente */
-    transform: translateX(-50%); /* centrado perfecto */
-    background-color: rgba(255, 255, 255, 0.85);
-; /* fondo oscuro opcional */
-    padding: 15px 25px;       /* espacio interno */
-    border-radius: 10px;      /* esquinas redondeadas */
-    text-align: center;        /* centra hora y fecha dentro del recuadro */
-   color: #0a3d62;
-             /* color de texto */
-    z-index: 10;              /* asegura que esté arriba de otros elementos */
-}
-
-/* Ajusta estilo de hora y fecha */
-#hora-actual {
-    font-size: 36px;
-    font-weight: bold;
-}
-
-#fecha-actual {
-    font-size: 18px;
-    margin-top: 5px;
+  font-size: 18px;
+  font-weight: 700;
+  margin-top: 4px;
 }
 /* ====== DERECHOS LABORALES ====== */
 
@@ -387,7 +553,7 @@ body {
 }
 @media (orientation: portrait) {
   #calendario {
-    padding: 20px 8px;
+    padding: 18px 10px 80px;
   }
 }
 /* ===== CONTACTO + AFÍLIATE EN PORTADA ===== */
@@ -445,17 +611,6 @@ body {
     max-width: 240px;
   }
 }
-/* ===== DÍA SOBRANTE JORNADA ANUAL (amarillo) ===== */
-#dias-mes div.dia-sobrante{
-  background-color: #ffd500 !important;
-  color: #111 !important;
-  font-weight: bold;
-}
-
-/* Color de la leyenda */
-.color.sobrante{
-  background: #ffd500;
-}
 /* ====== MARCAS DE TURNO (cuadrado abajo-izquierda) ====== */
 .marca-turno {
   position: absolute;
@@ -484,6 +639,25 @@ bottom: 3px;
 .festivo-autonomico .marca-turno,
 .festivo-local .marca-turno {
   border: 2px solid #000;
+}
+
+@media (max-width: 700px) {
+  #dias-mes div {
+    min-height: 64px;
+    font-size: 15px;
+  }
+
+  #dias-semana {
+    font-size: 14px;
+  }
+
+  #hora-actual {
+    font-size: 26px;
+  }
+
+  #fecha-actual {
+    font-size: 15px;
+  }
 }
 
 
