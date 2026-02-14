@@ -1,11 +1,11 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <title>Calendario Laboral Murcia</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <link rel="manifest" href="/manifest.json">
+  <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0a3d62">
   <link rel="stylesheet" href="style.css">
 </head>
@@ -50,9 +50,9 @@
 </div>
 
     <div class="barra-mes">
-      <button id="mes-anterior">◀</button>
+      <button id="mes-anterior" aria-label="Mes anterior">◀</button>
       <h2 id="nombre-mes"></h2>
-      <button id="mes-siguiente">▶</button>
+      <button id="mes-siguiente" aria-label="Mes siguiente">▶</button>
     </div>
 
     <div id="dias-semana">
@@ -81,6 +81,9 @@
 <div class="item-leyenda">
     <span class="color fin-semana"></span> Sábado / Domingo
   </div>
+  <div class="item-leyenda">
+    <span class="color hoy"></span> Día actual
+  </div>
 </div>
 
   </section>
@@ -90,37 +93,42 @@
   <div class="popup-contenido">
 
     <h3 id="agenda-fecha"></h3>
-<div id="plantillas-agenda" class="plantillas-agenda">
-  <button type="button" class="tpl" data-tpl="TURNO_M">Turno mañana</button>
-  <button type="button" class="tpl" data-tpl="TURNO_T">Turno tarde</button>
-  <button type="button" class="tpl" data-tpl="TURNO_N">Turno noche</button>
-  <button type="button" class="tpl" data-tpl="VACACIONES">Vacaciones</button>
-  <button type="button" class="tpl" data-tpl="MEDICO">Médico</button>
-  <button type="button" class="tpl" data-tpl="LIBRE">Libre</button>
-</div>
+    <div class="agenda-bloque">
+      <p class="agenda-subtitulo">Plantillas rápidas</p>
+      <div id="plantillas-agenda" class="plantillas-agenda">
+        <button type="button" class="tpl" data-tpl="TURNO_M">Turno mañana</button>
+        <button type="button" class="tpl" data-tpl="TURNO_T">Turno tarde</button>
+        <button type="button" class="tpl" data-tpl="TURNO_N">Turno noche</button>
+        <button type="button" class="tpl" data-tpl="VACACIONES">Vacaciones</button>
+        <button type="button" class="tpl" data-tpl="MEDICO">Médico</button>
+        <button type="button" class="tpl" data-tpl="LIBRE">Libre</button>
+      </div>
+    </div>
 
-    <!-- TEXTO AGENDA -->
-    <textarea id="agenda-texto" rows="6" cols="30"></textarea>
+    <div class="agenda-bloque">
+      <label class="agenda-subtitulo" for="agenda-texto">Nota del día</label>
+      <textarea id="agenda-texto" rows="6" cols="30" placeholder="Escribe aquí tu nota..."></textarea>
+    </div>
 
+    <div class="agenda-bloque">
+      <label for="agenda-hora">Hora (opcional):</label>
+      <input type="time" id="agenda-hora">
+      <label class="check-inline">
+        <input type="checkbox" id="activar-recordatorio">
+        Activar recordatorio
+      </label>
+      <select id="tiempo-recordatorio">
+        <option value="60">1 hora antes</option>
+        <option value="1440">1 día antes</option>
+        <option value="4320">3 días antes</option>
+      </select>
+    </div>
 
-<label for="agenda-hora">Hora (opcional):</label>
-<input type="time" id="agenda-hora">
-<label>
-  <input type="checkbox" id="activar-recordatorio">
-  Activar recordatorio
-</label>
-
-<select id="tiempo-recordatorio">
-  <option value="60">1 hora antes</option>
-  <option value="1440">1 día antes</option>
-  <option value="4320">3 días antes</option>
-</select>
-
-    <!-- ARCHIVOS / IMÁGENES -->
-    <input type="file" id="agenda-archivo" multiple>
-
-    <!-- AQUÍ SE VERÁN LAS IMÁGENES / ARCHIVOS -->
-    <div id="vista-archivos"></div>
+    <div class="agenda-bloque">
+      <label class="agenda-subtitulo" for="agenda-archivo">Archivos / imágenes</label>
+      <input type="file" id="agenda-archivo" multiple>
+      <div id="vista-archivos"></div>
+    </div>
 
     <!-- BOTONES -->
     <div class="botones-popup">
@@ -135,6 +143,23 @@
     <h2>🔔 RECORDATORIO</h2>
     <p id="alarma-texto"></p>
     <button id="cerrar-alarma">Aceptar</button>
+  </div>
+</div>
+<div id="popup-festivo" class="oculto" role="dialog" aria-modal="true" aria-labelledby="titulo-popup-festivo">
+  <div class="popup-festivo-contenido">
+    <h3 id="titulo-popup-festivo">Detalles del festivo</h3>
+    <pre id="texto-popup-festivo"></pre>
+    <button id="cerrar-popup-festivo" type="button">Cerrar</button>
+  </div>
+</div>
+
+<div id="pwa-banner" class="oculto" role="status" aria-live="polite">
+  <p id="pwa-banner-texto">La app puede instalarse o actualizarse.</p>
+  <p id="pwa-banner-estado" class="oculto"></p>
+  <div id="pwa-banner-acciones">
+    <button id="btn-instalar-app" class="oculto" type="button">Instalar app</button>
+    <button id="btn-actualizar-app" class="oculto" type="button">Actualizar app</button>
+    <button id="btn-cerrar-pwa-banner" type="button" aria-label="Cerrar aviso">Cerrar</button>
   </div>
 </div>
 
