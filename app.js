@@ -1,9 +1,7 @@
 
 
-
-
-if ("Notification" in window && Notification.permission !== "granted") {
-  Notification.requestPermission();
+if ("Notification" in window && Notification.permission === "default") {
+  // El permiso se pide cuando el usuario activa un recordatorio.
 }
 
 // ===== CONVERTIR ARCHIVO A BASE64 =====
@@ -19,7 +17,7 @@ function fileA64(file){
 const diasMes = document.getElementById("dias-mes");
 const nombreMes = document.getElementById("nombre-mes");
 let fechaActual = new Date();
-let anioActual = 2026;
+let anioActual = fechaActual.getFullYear();
 let mesActual = fechaActual.getMonth();
 
 // Array global temporal para archivos de la agenda
@@ -48,6 +46,41 @@ const FESTIVOS = [
   { fecha: "2026-12-31", tipo: "sobrante", nombre: "DÍA SOBRANTE JORNADA ANUAL" }
 ];
 
+function leerRecordatorio(fechaISO) {
+  try {
+    const raw = localStorage.getItem("recordatorio-" + fechaISO);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+function claveNotificado(recordatorio) {
+  return `recordatorio-notificado-${recordatorio.fecha}-${recordatorio.avisoTime}`;
+}
+
+function yaNotificado(recordatorio) {
+  return localStorage.getItem(claveNotificado(recordatorio)) === "1";
+}
+
+function marcarNotificado(recordatorio) {
+  localStorage.setItem(claveNotificado(recordatorio), "1");
+}
+
+function mostrarPopupFestivo(texto) {
+  const popup = document.getElementById("popup-festivo");
+  const textoEl = document.getElementById("texto-popup-festivo");
+  if (!popup || !textoEl) return;
+
+  textoEl.textContent = texto;
+  popup.classList.remove("oculto");
+}
+
+function cerrarPopupFestivo() {
+  const popup = document.getElementById("popup-festivo");
+  if (popup) popup.classList.add("oculto");
+}
+
  
 
 // ===== PINTAR CALENDARIO =====
@@ -73,6 +106,12 @@ function pintarCalendario() {
     const fechaISO = `${anioActual}-${String(mesActual+1).padStart(2,"0")}-${String(dia).padStart(2,"0")}`;
     const fecha = new Date(anioActual, mesActual, dia);
     const diaSemana = fecha.getDay();
+    const hoy = new Date();
+    const esHoy = (
+      dia === hoy.getDate() &&
+      mesActual === hoy.getMonth() &&
+      anioActual === hoy.getFullYear()
+    );
 
     // fines de semana
     if(diaSemana === 6) divDia.classList.add("sabado");
@@ -94,9 +133,14 @@ else divDia.classList.add("festivo-local");
       info.addEventListener("click", (e)=>{
         e.stopPropagation();
         const texto = festivosDia.map(f=>`• ${f.tipo.toUpperCase()}${f.municipio?" – "+f.municipio:""}: ${f.nombre}`).join("\n");
-        alert(texto);
+        mostrarPopupFestivo(texto);
       });
       divDia.appendChild(info);
+    }
+
+    // Resaltar el dia actual por encima de cualquier otra categoria
+    if (esHoy) {
+      divDia.classList.add("dia-hoy");
     }
 
     // PUNTO MORADO
@@ -121,10 +165,8 @@ if (notaGuardada) {
 const archivosGuardados = JSON.parse(localStorage.getItem("archivos-" + fechaISO) || "[]");
 // 🔔 ICONO RECORDATORIO
 // 🔔 ICONO RECORDATORIO CON TOOLTIP
-const recordatorioRaw = localStorage.getItem("recordatorio-" + fechaISO);
-
-if (recordatorioRaw) {
-  const recordatorio = JSON.parse(recordatorioRaw);
+const recordatorio = leerRecordatorio(fechaISO);
+if (recordatorio) {
 
   const campana = document.createElement("span");
   campana.textContent = "🔔";
@@ -288,6 +330,15 @@ function abrirAgenda(fechaISO){
   textarea.focus();
 const contPlantillas = document.getElementById("plantillas-agenda");
 const inputHora = document.getElementById("agenda-hora");
+const chk = document.getElementById("activar-recordatorio");
+const sel = document.getElementById("tiempo-recordatorio");
+const recordatorioGuardado = leerRecordatorio(fechaISO);
+
+if (inputHora) inputHora.value = recordatorioGuardado?.hora || "";
+if (chk) chk.checked = !!recordatorioGuardado?.avisoTime;
+if (sel && Number.isFinite(recordatorioGuardado?.minutosAntes)) {
+  sel.value = String(recordatorioGuardado.minutosAntes);
+}
 
 if (contPlantillas) {
   contPlantillas.onclick = (e) => {
@@ -329,12 +380,7 @@ if (contPlantillas) {
 
     nuevoGuardar.addEventListener("click", ()=>{
       const texto = textarea.value.trim();
-const hora = document.getElementById("agenda-hora").value; // "" si no se pone
-const recordatorio = {
-  mensaje: texto || "Recordatorio",
-  hora: hora // "" si no hay hora
-};
-localStorage.setItem("recordatorio-" + fechaISO, JSON.stringify(recordatorio));
+const hora = document.getElementById("agenda-hora").value;
 
       if(texto === ""){
         localStorage.removeItem("agenda-" + fechaISO);
@@ -347,25 +393,28 @@ localStorage.setItem("recordatorio-" + fechaISO, JSON.stringify(recordatorio));
       } else {
         localStorage.removeItem("archivos-" + fechaISO);
       }
-const chk = document.getElementById("activar-recordatorio");
-const sel = document.getElementById("tiempo-recordatorio");
-
 if (chk.checked) {
   const minutosAntes = parseInt(sel.value);
-
-  const fechaEvento = new Date(fechaISO + "T09:00"); // 9:00 por defecto
+  const horaEvento = hora || "09:00";
+  const fechaEvento = new Date(fechaISO + "T" + horaEvento);
   const avisoTime = fechaEvento.getTime() - minutosAntes * 60000;
 
   const recordatorio = {
     fecha: fechaISO,
     avisoTime,
-    mensaje: "Tienes algo en la agenda: " + fechaISO
+    minutosAntes,
+    mensaje: texto || ("Tienes algo en la agenda: " + fechaISO),
+    hora: horaEvento
   };
 
   localStorage.setItem(
     "recordatorio-" + fechaISO,
     JSON.stringify(recordatorio)
   );
+
+  if ("Notification" in window && Notification.permission === "default") {
+    Notification.requestPermission();
+  }
 } else {
   localStorage.removeItem("recordatorio-" + fechaISO);
 }
@@ -395,6 +444,23 @@ function mostrarAlarma(texto) {
   };
 }
 
+function avisarRecordatorio(recordatorio) {
+  if (!recordatorio || !recordatorio.avisoTime || yaNotificado(recordatorio)) return;
+
+  const mensaje = recordatorio.hora
+    ? `${recordatorio.mensaje} (${recordatorio.hora})`
+    : recordatorio.mensaje;
+
+  mostrarAlarma(mensaje);
+  enviarNotificacion("⏰ Recordatorio", mensaje);
+
+  if ("vibrate" in navigator) {
+    navigator.vibrate([250, 100, 250, 100, 400]);
+  }
+
+  marcarNotificado(recordatorio);
+}
+
 // ===== BOTONES MES =====
 document.getElementById("mes-anterior").addEventListener("click", ()=>{
   mesActual--;
@@ -412,7 +478,23 @@ document.getElementById("mes-siguiente").addEventListener("click", ()=>{
 document.addEventListener("DOMContentLoaded", () => {
   pintarCalendario();
   programarRecordatorios();
+  vigilarRecordatoriosEnPrimerPlano();
   cargarDatosRemotos();
+  iniciarReloj();
+
+  const cerrarFestivoBtn = document.getElementById("cerrar-popup-festivo");
+  const popupFestivo = document.getElementById("popup-festivo");
+  if (cerrarFestivoBtn) {
+    cerrarFestivoBtn.addEventListener("click", cerrarPopupFestivo);
+  }
+  if (popupFestivo) {
+    popupFestivo.addEventListener("click", (e) => {
+      if (e.target === popupFestivo) cerrarPopupFestivo();
+    });
+  }
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") cerrarPopupFestivo();
+  });
 });
 window.addEventListener("online", () => {
   cargarDatosRemotos();
@@ -421,20 +503,45 @@ function programarRecordatorios() {
   Object.keys(localStorage).forEach(key => {
     if (!key.startsWith("recordatorio-")) return;
 
-    const r = JSON.parse(localStorage.getItem(key));
+    let r = null;
+    try {
+      r = JSON.parse(localStorage.getItem(key));
+    } catch {
+      return;
+    }
     if (!r.avisoTime) return;
 
     const delay = r.avisoTime - Date.now();
 
     if (delay > 0) {
       setTimeout(() => {
-        enviarNotificacion(
-          "⏰ Recordatorio",
-          r.mensaje + " (" + r.hora + ")"
-        );
+        avisarRecordatorio(r);
       }, delay);
+      return;
+    }
+
+    if (Date.now() - r.avisoTime < 30 * 60 * 1000) {
+      avisarRecordatorio(r);
     }
   });
+}
+
+function vigilarRecordatoriosEnPrimerPlano() {
+  setInterval(() => {
+    Object.keys(localStorage).forEach((key) => {
+      if (!key.startsWith("recordatorio-")) return;
+
+      let r = null;
+      try {
+        r = JSON.parse(localStorage.getItem(key));
+      } catch {
+        return;
+      }
+
+      if (!r || !r.avisoTime || yaNotificado(r)) return;
+      if (Date.now() >= r.avisoTime) avisarRecordatorio(r);
+    });
+  }, 30000);
 }
 
 
@@ -458,11 +565,6 @@ async function cargarDatosRemotos() {
     // no mostrar nada al usuario
   }
 }
-
-document.addEventListener("DOMContentLoaded", () => {
-  pintarCalendario();
-  programarRecordatorios();
-});
 
 function iniciarReloj() {
   const horaEl = document.getElementById("hora-actual");
@@ -491,7 +593,6 @@ function iniciarReloj() {
   setInterval(actualizar, 1000);
 }
 
-document.addEventListener("DOMContentLoaded", iniciarReloj);
 function enviarNotificacion(titulo, mensaje) {
   if (!("Notification" in window)) return;
 
@@ -505,15 +606,165 @@ function enviarNotificacion(titulo, mensaje) {
 // todo tu código del calendario arriba
 // ------------------------------
 
-// REGISTRO DEL SERVICE WORKER
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js')
-      .then(() => console.log('Service Worker registrado'))
-      .catch(err => console.error('SW error', err));
+let deferredInstallPrompt = null;
+let swRegistration = null;
+const PWA_BANNER_DISMISSED_KEY = "pwa-banner-dismissed";
+
+function isBannerDismissed() {
+  return localStorage.getItem(PWA_BANNER_DISMISSED_KEY) === "1";
+}
+
+function setBannerDismissed(value) {
+  if (value) {
+    localStorage.setItem(PWA_BANNER_DISMISSED_KEY, "1");
+  } else {
+    localStorage.removeItem(PWA_BANNER_DISMISSED_KEY);
+  }
+}
+
+function setBannerStatus(texto = "") {
+  const estadoEl = document.getElementById("pwa-banner-estado");
+  if (!estadoEl) return;
+  estadoEl.textContent = texto;
+  estadoEl.classList.toggle("oculto", !texto);
+}
+
+function setBannerState({ showInstall = false, showUpdate = false, texto = "" }) {
+  const banner = document.getElementById("pwa-banner");
+  const textoEl = document.getElementById("pwa-banner-texto");
+  const btnInstall = document.getElementById("btn-instalar-app");
+  const btnUpdate = document.getElementById("btn-actualizar-app");
+
+  if (!banner || !textoEl || !btnInstall || !btnUpdate) return;
+  if (isBannerDismissed() && showInstall && !showUpdate) return;
+
+  textoEl.textContent = texto || "La app puede instalarse o actualizarse.";
+  btnInstall.classList.toggle("oculto", !showInstall);
+  btnUpdate.classList.toggle("oculto", !showUpdate);
+  banner.classList.toggle("oculto", !showInstall && !showUpdate);
+}
+
+function ocultarBannerPwa() {
+  const banner = document.getElementById("pwa-banner");
+  if (banner) banner.classList.add("oculto");
+  setBannerStatus("");
+}
+
+function prepararInstalacionPwa() {
+  const btnInstall = document.getElementById("btn-instalar-app");
+  const btnCerrar = document.getElementById("btn-cerrar-pwa-banner");
+  if (!btnInstall || !btnCerrar) return;
+
+  window.addEventListener("beforeinstallprompt", (event) => {
+    event.preventDefault();
+    deferredInstallPrompt = event;
+    setBannerDismissed(false);
+    setBannerStatus("");
+    setBannerState({
+      showInstall: true,
+      texto: "Instala la app para usarla como acceso directo en tu movil."
+    });
+  });
+
+  btnInstall.addEventListener("click", async () => {
+    if (!deferredInstallPrompt) return;
+    setBannerDismissed(false);
+    setBannerStatus("Abriendo instalador...");
+    deferredInstallPrompt.prompt();
+    const choiceResult = await deferredInstallPrompt.userChoice;
+    deferredInstallPrompt = null;
+
+    if (choiceResult.outcome === "accepted") {
+      setBannerStatus("Instalacion aceptada.");
+      setTimeout(ocultarBannerPwa, 1200);
+      return;
+    }
+
+    setBannerDismissed(true);
+    setBannerStatus("Instalacion cancelada.");
+    setTimeout(ocultarBannerPwa, 1200);
+  });
+
+  window.addEventListener("appinstalled", () => {
+    deferredInstallPrompt = null;
+    setBannerDismissed(false);
+    setBannerState({
+      showInstall: false,
+      showUpdate: false,
+      texto: "Aplicacion instalada."
+    });
+    setBannerStatus("App instalada correctamente.");
+    setTimeout(ocultarBannerPwa, 1600);
+  });
+
+  btnCerrar.addEventListener("click", () => {
+    setBannerDismissed(true);
+    ocultarBannerPwa();
   });
 }
 
+function configurarActualizacionPwa(registration) {
+  const btnUpdate = document.getElementById("btn-actualizar-app");
+  if (!btnUpdate) return;
+
+  const mostrarBotonActualizar = () => {
+    setBannerDismissed(false);
+    setBannerStatus("");
+    setBannerState({
+      showUpdate: true,
+      texto: "Hay una nueva version disponible. Pulsa actualizar."
+    });
+  };
+
+  if (registration.waiting) {
+    mostrarBotonActualizar();
+  }
+
+  registration.addEventListener("updatefound", () => {
+    const worker = registration.installing;
+    if (!worker) return;
+
+    worker.addEventListener("statechange", () => {
+      if (worker.state === "installed" && navigator.serviceWorker.controller) {
+        mostrarBotonActualizar();
+      }
+    });
+  });
+
+  btnUpdate.addEventListener("click", () => {
+    setBannerDismissed(false);
+    setBannerStatus("Actualizando app...");
+    btnUpdate.disabled = true;
+    if (registration.waiting) {
+      registration.waiting.postMessage({ type: "SKIP_WAITING" });
+      return;
+    }
+    setBannerStatus("No hay actualizacion pendiente.");
+    btnUpdate.disabled = false;
+  });
+
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    setBannerStatus("Version actualizada. Recargando...");
+    setTimeout(() => window.location.reload(), 400);
+  });
+}
+
+async function registrarServiceWorker() {
+  if (!("serviceWorker" in navigator)) return;
+
+  try {
+    swRegistration = await navigator.serviceWorker.register("./sw.js");
+    configurarActualizacionPwa(swRegistration);
+    setInterval(() => swRegistration.update(), 60 * 60 * 1000);
+  } catch (err) {
+    console.error("SW error", err);
+  }
+}
+
+window.addEventListener("load", () => {
+  registrarServiceWorker();
+  prepararInstalacionPwa();
+});
 
 
 
